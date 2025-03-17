@@ -2,9 +2,11 @@
 title: "Proposal"
 author: "Amyre"
 date: "2025-03-17"
-output: html_document
-editor_options: 
-  markdown: 
+output:
+  pdf_document: default
+  html_document: default
+editor_options:
+  markdown:
     wrap: 72
 ---
 
