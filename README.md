@@ -11,4 +11,4 @@ Nithila Sathieskumar
 
 ## data from:
 https://doi.org/10.5061/dryad.vq744
-(just the )
+(just the OUT table and mapping.txt)
