@@ -91,16 +91,17 @@ be used for species classification?
     the clustering of microbiome samples based on species
     classification. 
 
-```{=html}
-<!-- -->
-```
+-   Perform a linear model to test composition significance of each NMDS
+    axes
+
 -   Random Forest classification techniques should be implemented to
     identify the most effective operational taxonomic units (OTUs)
     differentiating among the various species present within the
-    microbiome dataset.
+    microbiome dataset. Must balance out OTUs among training and test
+    data to ensure more abundant OTUs are not overrepresented.
 
--   Assess model performance via confusion matrix and accuracy
-    calculation.
+-   Assess model performance via confusion matrix and Cohen’s Kappa
+    calculation
 
 ***Question 2:***
 
@@ -181,7 +182,7 @@ Rows = OTUs, columns = samples, values = abundance counts.
 
 family, genus, species (depends on classification confidence).
 
-### **Preprocessing steps**
+### **Pre-processing steps**
 
 ***Normalize the data:***
 
@@ -207,11 +208,11 @@ family, genus, species (depends on classification confidence).
 | March 11-16  | Finalize dataset choice                                | All                  |
 | March 17     | Set up Github                                          | Amyre                |
 | March 17     | Finalize and submit proposal                           | All                  |
-| March 18-22  | Conduct NMDS & Random Forest Analysis                  | Amyre and Nithilia   |
+| March 18-22  | Conduct NMDS & Random Forest Analysis                  | Amyre and Nithila    |
 | March 18-22  | Perform normalization & phylogenetic tree construction | Jennah and Taylor    |
 | March 23-27  | Create visualizations (barplots, heatmap)              | Bonnie and Mackenzie |
 | March 23-27  | Interpret results & draft discussion, methods summary  | All                  |
-| March 23-27  | Methods summary                                        | Nithilia             |
+| March 23-27  | Methods summary                                        | Nithila              |
 | March 28- 30 | Finalize report & GitHub documentation                 | All                  |
 | March 28- 30 | Make final presentation                                | All                  |
 | March 31     | Submit final project, ready to present!                | All                  |
