@@ -81,91 +81,137 @@ analysis.
 ***Question 1:***
 
 Does microbiome composition differ significantly between dung beetle
-species (irrespective of life-stage or sex), and can these differences
+species (irrespective of life stage or sex), and can these differences
 be used for species classification?
 
-**Method:** Use distance matrix and non-metric multidimensional scaling
-(NMDS) to visualize microbiome clustering by species. Apply Random
-Forest classification to identify OTUs that best differentiate species.
-Assess model performance using ROC curves or boxplots of key OTUs.
+**Method:**
+
+-   Utilize a distance matrix in conjunction with non-metric
+    multidimensional scaling (NMDS) as a means to effectively visualize
+    the clustering of microbiome samples based on species
+    classification. 
+
+```{=html}
+<!-- -->
+```
+-   Random Forest classification techniques should be implemented to
+    identify the most effective operational taxonomic units (OTUs)
+    differentiating among the various species present within the
+    microbiome dataset.
+
+-   Assess model performance via confusion matrix and accuracy
+    calculation.
 
 ***Question 2:***
 
-How do OTU abundance patterns influence microbial community structure
-across dung beetle samples?
+How do microbial communities differ between dung beetle samples?
 
-**Method:** Perform NMDS using two approaches: Relative abundance-based
-NMDS to examine quantitative differences. Presence/absence-based NMDS to
-assess compositional shifts. Identify dominant bacterial families for
-each species using barplots (extract families using regex from OTU
-taxonomic lineages). Compare results to determine if community structure
-is driven more by presence/absence or relative abundance
+**Method:**
+
+-   Perform NMDS:
+
+```{=html}
+<!-- -->
+```
+-   Relative abundance-based NMDS to examine quantitative differences.
+
+```{=html}
+<!-- -->
+```
+-   Identify dominant bacterial families for each species using barplots
+    (extract families using regex from OTU taxonomic lineages).
 
 ***Question 3:***
 
 How do microbial communities of each dung beetle species differ in terms
 of taxonomic diversity and phylogenetic structure?
 
-**Method**: Use BLAST to identify OTUs from the NCBI database. Perform
-multiple sequence alignment using MUSCLE. Construct a phylogenetic tree
-and visualize distances using a heatmap. Investigate if certain
-microbial taxa remain species-specific despite identical rearing
-conditions (indicative of host-dependent symbionts).
+**Method**:
 
-### Dataset Structure & Pre-processing
+-   Using the normalized data from previous analyses, multiple sequence
+    alignment is meticulously carried out utilizing the MUSCLE
+    algorithm. 
 
-Overview of dataset structure Number of samples: The data contain
-details of various kinds of dung beetles. It contains a fixed number of
-samples (for more information, refer to the metadata file). Every sample
-is from a single dung beetle under various experimental conditions
-Metadata variables: Species: Indicates what type of dung beetle the
-sample was taken from Diet: What beetles eat, which can alter the kind
-of germs that are present Life stage: Whether the sample is from an
-adult or larval beetle Experimental condition: Various circumstances
-under which the samples were collected (such as alterations in the
-environment or diet). Sequencing depth: The quantity of sequencing reads
-obtained from each sample (crucial for normalization) OTU table: Rows =
-OTUs, columns = samples, values = abundance counts. Taxonomic
-resolution: family, genus, species (depends on classification
-confidence). Preprocessing steps Filter low-abundance OTUs: Remove OTUs
-with \<0.01% relative abundance across samples. Threshold: Filter out
-OTUs having a relative abundance of less than 0.01% across all samples.
-This eliminates OTUs that likely do not contribute significantly to the
-structure of the microbial community, minimizing noise within the data.
-Rarefaction: Standardize sequencing depth across samples to mitigate
-library size biases. Purpose: Ensure that each sample has the same
-sequencing amount. Additional sequencing in certain samples can result
-in unfair comparisons. Rarefaction prevents this by employing smaller
-samples to provide equal sequencing depth for each sample. Method:
-Randomly select a given number of sequences from each sample. The number
-is taken from the smallest sample. This serves to decrease any potential
-biases from library size that may be introduced to subsequent analyses.
-Changing Information Log Transformation: Transform the OTU abundance
-data with a log transformation. This transformation makes the values
-smaller and less sensitive to extremely high OTUs, making the data more
-suitable for NMDS (Non-metric Multidimensional Scaling) and other
-statistical procedures requiring normally distributed data. Convert the
-OTU abundance to a simple yes or no for compositional analysis. This
-indicates whether each OTU is found in a sample or not. This allows one
-to examine changes in community composition without concerning oneself
-with how much of each OTU is present. This is particularly critical when
-examining which OTUs tend to be present or absent across different
-species. Data transformation: Log-transform OTU abundance for NMDS.
-Convert OTU presence/absence to a binary matrix for compositional
-analysis
+```{=html}
+<!-- -->
+```
+-   A phylogenetic tree is constructed to elucidate the evolutionary
+    relationships among the sequences. 
 
-Timeline
+-   The distances between various taxa are visualized using a heatmap,
+    clearly representing interspecies relationships. 
 
-| Date         | Tasks                                                  | Responsible Members |
-|------------------|-------------------------------------|------------------|
-| March 11-16  | Finalize dataset choice                                | All                 |
-| March 17     | Set up Github                                          | Amyre               |
-| March 17     | Finalize and submit proposal                           | All                 |
-| March 18-22  | Conduct NMDS & Random Forest Analysis                  | Amyre and Nithilia  |
-| March 18-22  | Perform normalization & phylogenetic tree construction | Jennah and Taylor   |
-| March 23-27  | Create visualizations (barplots, heatmap)              | Houston             |
-| March 23-27  | Interpret results & draft discussion, methods summary  | Houston             |
-| March 28- 30 | Finalize report & GitHub documentation                 | Houston             |
-| March 28- 30 | Make final presentation                                | Houston             |
-| March 31     | Submit final project                                   | All                 |
-| April 01     | Final Presentation                                     | All                 |
+**Overall,** we aim to investigate whether certain microbial taxa
+exhibit species-specific characteristics, even when subjected to
+identical rearing conditions. This indicates the presence of
+host-dependent symbionts, which may play a crucial role in the
+ecological dynamics of these microbial communities.
+
+## Dataset Structure & Pre-processing
+
+### **Overview of dataset structure**
+
+***Number of samples:***
+
+The data contains details of various kinds of dung beetles. It contains
+a fixed number of samples (for more information, refer to the metadata
+file). Every sample is from a single dung beetle under various
+experimental conditions
+
+***Metadata variables:*** 
+
+Species: Indicates what type of dung beetle the sample was taken from
+
+Diet: What beetles eat, which can alter the kind of germs that are
+present
+
+Life stage: Whether the sample is from an adult or larval beetle
+
+Experimental condition: Various circumstances under which the samples
+were collected (such as environmental or diet alterations).
+
+Sequencing depth: The quantity of sequencing reads obtained from each
+sample (crucial for normalization)
+
+***OTU table:*** 
+
+Rows = OTUs, columns = samples, values = abundance counts.
+
+***Taxonomic resolution:***
+
+family, genus, species (depends on classification confidence).
+
+### **Preprocessing steps**
+
+***Normalize the data:***
+
+-   Sum across the OTU ID column
+
+-   Each value in that OTU ID column then gets divided by that sum 
+
+-   That number must then be multiplied by 10\^3 (to the thousand) or
+    sum of columns. As long as method is consistent across samples and
+    be rational (annoying if the numbers to be too small)
+
+***Data transformation:***
+
+-   Log-transform OTU abundance for NMDS.
+
+-   Convert OTU presence/absence to a binary matrix for compositional
+    analysis
+
+## Timeline
+
+| Date         | Tasks                                                  | Responsible Members  |
+|------------------|-----------------------------------|------------------|
+| March 11-16  | Finalize dataset choice                                | All                  |
+| March 17     | Set up Github                                          | Amyre                |
+| March 17     | Finalize and submit proposal                           | All                  |
+| March 18-22  | Conduct NMDS & Random Forest Analysis                  | Amyre and Nithilia   |
+| March 18-22  | Perform normalization & phylogenetic tree construction | Jennah and Taylor    |
+| March 23-27  | Create visualizations (barplots, heatmap)              | Bonnie and Mackenzie |
+| March 23-27  | Interpret results & draft discussion, methods summary  | All                  |
+| March 23-27  | Methods summary                                        | Nithilia             |
+| March 28- 30 | Finalize report & GitHub documentation                 | All                  |
+| March 28- 30 | Make final presentation                                | All                  |
+| March 31     | Submit final project, ready to present!                | All                  |
