@@ -15,9 +15,9 @@ output: html_document
 
 -   is two thirds train one third test data okay? Should I switch to half and half or something else?
 
--   can we confirm that removing consensus lineage is appropraite?
+-   can we confirm that removing consensus lineage is appropriate?
 
--   conform that removing untreated dung samples is appropraite? (potentially we could test later on)
+-   conform that removing untreated dung samples is appropriate? (potentially we could test later on)
 
 ## Set up
 
@@ -106,7 +106,7 @@ merged_data<- subset(merged_data, Species != "untreated dung")
 merged_data$Species<- as.factor(merged_data$Species)
 ```
 
-These samples are not relevant to our research question
+These samples are not relevant to our research question.
 
 ***Remove BeetleID***
 
@@ -152,29 +152,9 @@ rf_model <- randomForest(Species~ ., data = train_data, ntree = 100, mtry=3, nod
 predictions <- predict(rf_model, newdata = test_data)
 ```
 
-```{r}
-
-# Train Random Forest model
-rf_model <- randomForest(X_train, y_train, ntree = 100)
-
-# Make predictions on the test data
-y_pred <- predict(rf_model, X_test)
-
-# Evaluate model performance (classification)
-confusion_matrix <- table(Predicted = y_pred, Actual = y_test)
-print(confusion_matrix)
-accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
-print(paste("Accuracy: ", accuracy))
-```
-
 ## Analyze 
 
 ### Confusion matrix 
-
-```{r}
-length(predictions)
-length(actual)
-```
 
 ```{r}
 actual <- test_data$Species
@@ -183,5 +163,12 @@ confusion_matrix <- table(Predicted = predictions, Actual = actual)
 
 ```{r}
 accuracy <- sum(predictions == actual) / length(actual)
+
+```
+
+### Save
+
+```{r}
+save(confusion_matrix, file = "./Figures/RFConfusionMatrix.RData")
 
 ```
