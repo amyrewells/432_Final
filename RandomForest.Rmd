@@ -1,0 +1,187 @@
+---
+title: "Random Forrest?"
+author: "Amyre"
+date: "2025-03-23"
+output: html_document
+---
+
+# Random Forrest
+
+## Questions/Comments for Group
+
+-   Should we use OTU, relative OTU or binary OTU tables for random forest model?
+
+-   If setting seed use 432
+
+-   is two thirds train one third test data okay? Should I switch to half and half or something else?
+
+-   can we confirm that removing consensus lineage is appropraite?
+
+-   conform that removing untreated dung samples is appropraite? (potentially we could test later on)
+
+## Set up
+
+***Load packages***
+
+```{r}
+library(randomForest)
+```
+
+### OTU data
+
+***Read in OTU data***
+
+```{r}
+otu_table<- read.csv("./data/otu_table.csv")
+```
+
+***Flip table***
+
+In the original table rows are OTUs and columns beetle samples. To match standard OTU format this should be switched.
+
+```{r}
+otu_table<- as.data.frame(t(otu_table))
+
+```
+
+***Adjust row and column names***
+
+```{r}
+#columns
+col_names <- paste("X.OTU.ID.", trimws(otu_table[1, ]), sep="")
+otu_table <- otu_table[-1, ] #remove new rownames form data
+colnames(otu_table) <- col_names
+```
+
+```{r}
+#rows
+otu_table$BeetleID <- rownames(otu_table)
+```
+
+***Remove consensus lineage***
+
+```{r}
+otu_table<- otu_table[1:(nrow(otu_table) - 1), ]
+```
+
+### Mapping data
+
+***Read in mapping data***
+
+```{r}
+mapping <- read.table("./data/mapping.txt", header = F, sep = "\t")
+
+```
+
+***Get BeetleID and Species information***
+
+```{r}
+mapping$BeetleID <- paste("X", mapping$V1, sep="")
+```
+
+```{r}
+#Extract  species information using regex 
+mapping$Species <- sub("^([^ ]+ [^ ]+).*", "\\1", mapping$V4)
+
+```
+
+```{r}
+#make new df of important info
+keep_mapping<- mapping[, c("BeetleID", "Species")]
+```
+
+### Combine and clean
+
+***Merge otu_table and keep_mapping***
+
+```{r}
+merged_data<- merge(otu_table, keep_mapping, by= "BeetleID", all=TRUE)
+```
+
+***Remove untreated dung samples***
+
+```{r}
+merged_data<- subset(merged_data, Species != "untreated dung")
+
+merged_data$Species<- as.factor(merged_data$Species)
+```
+
+These samples are not relevant to our research question
+
+***Remove BeetleID***
+
+```{r}
+merged_data<- merged_data[, 2:ncol(merged_data)]
+```
+
+***Check for NAs***
+
+```{r}
+sum(is.na(merged_data))
+```
+
+***Ensure numbers are numeric***
+
+```{r}
+for (col_name in colnames(merged_data)[1:(ncol(merged_data)-1)]) {
+  merged_data[[col_name]] <- as.numeric(merged_data[[col_name]])
+}
+```
+
+***Split data into train and test***
+
+```{r}
+test_data<- merged_data[1:nrow(merged_data) %% 3 == 0, ]
+
+train_data <- merged_data[1:nrow(merged_data) %% 3 != 0, ]
+```
+
+## Run Random Forest 
+
+***Train model***
+
+```{r}
+set.seed(432)
+rf_model <- randomForest(Species~ ., data = train_data, ntree = 100, mtry=3, nodesize=1, importance=TRUE)
+
+```
+
+***Use model to predict test data***
+
+```{r}
+predictions <- predict(rf_model, newdata = test_data)
+```
+
+```{r}
+
+# Train Random Forest model
+rf_model <- randomForest(X_train, y_train, ntree = 100)
+
+# Make predictions on the test data
+y_pred <- predict(rf_model, X_test)
+
+# Evaluate model performance (classification)
+confusion_matrix <- table(Predicted = y_pred, Actual = y_test)
+print(confusion_matrix)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(paste("Accuracy: ", accuracy))
+```
+
+## Analyze 
+
+### Confusion matrix 
+
+```{r}
+length(predictions)
+length(actual)
+```
+
+```{r}
+actual <- test_data$Species
+confusion_matrix <- table(Predicted = predictions, Actual = actual)
+```
+
+```{r}
+accuracy <- sum(predictions == actual) / length(actual)
+
+```
