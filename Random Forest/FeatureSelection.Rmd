@@ -7,20 +7,44 @@ output: html_document
 
 # Feature Selection (for RF)
 
-## Filter by Abundance
+### Get abundance data
 
-***Read in abundance data***
+***Read in relative OTU table***
 
 ```{r}
-ab_dat<- read.csv("./data/otu_table.csv")
+rel_data<- read.csv("../data/otu_rel.csv")
 ```
 
-## Linear models
+***Remove irrelevant rows***
 
-filter abundance over 1% check narrow filter
+```{r}
+rel_data<- rel_data[, 2:(ncol(rel_data)-1) ]
+```
 
-goal: 200 features max
+### Get total counts
 
-lm keep top 50?
+***Sum rows***
 
-correlateion?
+```{r}
+rel_row_sums<- rowSums(rel_data)
+```
+
+***Get total***
+
+```{r}
+total<- sum(rel_row_sums)
+```
+
+### Filter
+
+Only keep OTUs that make up more than 0.5% of the observed microbes
+
+```{r}
+filtered_data <- rel_data[rel_row_sums / total > 0.005, ]
+```
+
+### Export data
+
+```{r}
+write.csv(filtered_data, file = "../data/otu_filtered.csv", row.names = TRUE)
+```

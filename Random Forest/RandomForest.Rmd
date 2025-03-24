@@ -20,7 +20,7 @@ library(randomForest)
 ***Read in relative OTU data***
 
 ```{r}
-otu_table<- read.csv("./data/otu_rel.csv")
+otu_table<- read.csv("../data/otu_filtered.csv")
 ```
 
 ***Flip table***
@@ -46,18 +46,12 @@ colnames(otu_table) <- col_names
 otu_table$BeetleID <- rownames(otu_table)
 ```
 
-***Remove consensus lineage***
-
-```{r}
-otu_table<- otu_table[1:(nrow(otu_table) - 1), ]
-```
-
 ### Mapping data
 
 ***Read in mapping data***
 
 ```{r}
-mapping <- read.table("./data/mapping.txt", header = F, sep = "\t")
+mapping <- read.table("../data/mapping.txt", header = F, sep = "\t")
 
 ```
 
@@ -124,7 +118,7 @@ test_data<- merged_data[1:nrow(merged_data) %% 3 == 0, ]
 train_data <- merged_data[1:nrow(merged_data) %% 3 != 0, ]
 ```
 
-## Run Random Forest 
+## Run Random Forest
 
 ***Train model***
 
@@ -140,33 +134,53 @@ rf_model <- randomForest(Species~ ., data = train_data, ntree = 100, mtry=3, nod
 predictions <- predict(rf_model, newdata = test_data)
 ```
 
-## Analyze 
+## Analyze
 
-### Importance 
+### Importance
 
 ```{r}
 importance_values <- importance(rf_model)
-sorted_importance <- importance_values[order(-importance_values[, 1]), ]
+sorted_importance <- importance_values[order(-importance_values[, "MeanDecreaseAccuracy"]), ]
+
 top_10 <- head(sorted_importance, 10)
 top_10
 
 ```
 
-### Confusion matrix 
+### Confusion matrix
+
+***Make matrix***
 
 ```{r}
 actual <- test_data$Species
 confusion_matrix <- table(Predicted = predictions, Actual = actual)
 ```
 
+***Get TP, TN, FP, FN***
+
 ```{r}
-accuracy <- sum(predictions == actual) / length(actual)
-print(paste("The accuracy of the model is ", accuracy))
+# For classifying E. intermedius
+ITP <- confusion_matrix["E. intermedius", "E. intermedius"] 
+ITN <- confusion_matrix["E. triangulatus", "E. triangulatus"]  
+IFP <- confusion_matrix["E. intermedius", "E. triangulatus"]  
+IFN <- confusion_matrix["E. triangulatus", "E. intermedius"]
 ```
 
-### Save
+***Calculate Cohen's Kappa***
+
+```{python}
+# For E. intermedius
+Itop= 2*((r.ITP *r.ITN)-(r.IFN*r.IFP))
+Ibottom= ((r.ITP+r.IFP)*(r.IFP+r.ITN))+((r.ITP+r.IFN)*(r.IFN+r.ITN))
+IKappa= Itop/Ibottom
+print("Cohen's Kappa for E. intermedius clasification is " + str(IKappa))
+```
+
+## Save
 
 ```{r}
-save(confusion_matrix, file = "./Figures/RFConfusionMatrix.RData")
+save(confusion_matrix, file = "../Figures/RFConfusionMatrix.RData")
+save(merged_data, file = "../data/otu_filtered_merged.RData")
+save(top_10, file = "./top_10.RData")
 
 ```
