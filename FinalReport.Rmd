@@ -1,0 +1,73 @@
+---
+title: "FinalReport"
+author: "Amyre"
+date: "2025-03-24"
+output: html_document
+---
+
+# Final Report
+
+## Members
+
+Bonnie Rule (20295738),
+
+Mackenzie Calhoun (20265644),
+
+Amyre Wells (20320047),
+
+Jennah Levac (20169998),
+
+Taylor Pontet-Dasilva (20310351),
+
+Nithila Sathieskumar (20279386)
+
+## Setup
+
+***github***
+
+<https://github.com/amyrewells/432_Final>
+
+***data aquesition***
+
+***data transformation***
+
+Abundance data from the OTU table was transformed into relative abundance data. This was done to ensure we investigate the relative make-up of microbe communities, without confounding differences in microbe abundance between samples.
+
+Data was then cleaned and filtered so only microbe OTUs representing over 0.5% of the microbes sampled were kept. This was done as a feature selection step to prevent over-fitting in the models to be run.
+
+Filtered data was then merged with relevant mapping data to categorize samples by species.
+
+## Question 1- 
+
+### A- Do microbiome communities significantly differ between E. intermedius and E. triangulatus dung beetle species?
+
+### B- Can these differences be used to predict species classification?
+
+By fitting a Random Forest model, we revealed that the make-up of microbial communities can be used to classify E. intermedius and E. triangulatus dung beetle samples with 88.89% accuracy. The confusion matrix of this model is shown in Table 1.
+
+**Table 1**. Confusion Matrix for Random Forest model classifying beetle species from microbe community data. Cohen's Kappa for this table is 0.7662.
+
+```{r}
+load("./Figures/RFConfusionMatrix.RData")
+print(confusion_matrix)
+```
+
+Additionally, we looked at which OTUs were most important in classifying decisions.
+
+**Table 2.** Top 10 most important microbe OTUs in classifying beetle species.
+
+### C- How do microbial communities differ between samples of different species?
+
+##  Question 2
+
+## Reproducabilty 
+
+To reproduce our code, please run the following files in order.
+
+1.  abundance to relative
+2.  ./RandomForest/FeatureSelection.Rmd
+3.  ./RandomForest/RandomForest.Rmd
+4.  NMDS
+5.  Plots for 2
+6.  3
+7.  ./FinalProject.Rmd
