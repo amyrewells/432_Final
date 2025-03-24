@@ -1,23 +1,11 @@
 ---
-title: "Random Forrest?"
+title: "Random Forrest"
 author: "Amyre"
 date: "2025-03-23"
 output: html_document
 ---
 
 # Random Forrest
-
-## Questions/Comments for Group
-
--   Should we use OTU, relative OTU or binary OTU tables for random forest model?
-
--   If setting seed use 432
-
--   is two thirds train one third test data okay? Should I switch to half and half or something else?
-
--   can we confirm that removing consensus lineage is appropriate?
-
--   conform that removing untreated dung samples is appropriate? (potentially we could test later on)
 
 ## Set up
 
@@ -29,10 +17,10 @@ library(randomForest)
 
 ### OTU data
 
-***Read in OTU data***
+***Read in relative OTU data***
 
 ```{r}
-otu_table<- read.csv("./data/otu_table.csv")
+otu_table<- read.csv("./data/otu_rel.csv")
 ```
 
 ***Flip table***
@@ -154,6 +142,16 @@ predictions <- predict(rf_model, newdata = test_data)
 
 ## Analyze 
 
+### Importance 
+
+```{r}
+importance_values <- importance(rf_model)
+sorted_importance <- importance_values[order(-importance_values[, 1]), ]
+top_10 <- head(sorted_importance, 10)
+top_10
+
+```
+
 ### Confusion matrix 
 
 ```{r}
@@ -163,7 +161,7 @@ confusion_matrix <- table(Predicted = predictions, Actual = actual)
 
 ```{r}
 accuracy <- sum(predictions == actual) / length(actual)
-
+print(paste("The accuracy of the model is ", accuracy))
 ```
 
 ### Save
