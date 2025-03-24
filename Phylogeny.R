@@ -131,9 +131,12 @@ library(dplyr)
 # ---- Step 1: Load MetaData and OTUtable ----
 MetaData <- read.delim("data/mapping.txt", row.names = "X.SampleID")
 OTUtable <- read.csv("data/otu_table.csv", row.names = "OTU_ID")
+write.csv(top_17, "Top17_OTU.csv")
+Importance<- read.csv("Top17_OTU.csv")
 
 # ---- Step 2: Fetch Sequences from NCBI ----
-accNum <- paste0("KX459", seq(698, 718))
+accNum <- c("KX459721", "KX460758", "KX459915", "KX460102", "KX459847", 
+            "KX460465", "KX459737", "KX460199", "KX459813")
 fetched <- lapply(accNum, function(accNum) {
   entrez_fetch(db = "nucleotide", id = accNum, rettype = "fasta", retmode = "text")
 })
@@ -169,20 +172,14 @@ label_info <- label_info %>%
   mutate(Bacteria = ifelse(duplicated(Bacteria), paste0(Bacteria, "_", row_number()), Bacteria)) %>%
   ungroup()
 
-# ---- Step 8: Match OTUs with Importance Data ----
-otu_importance <- data.frame(
-  OTU = c("OTU#10", "OTU#100", "OTU#107", "OTU#1007", "OTU#101", 
-          "OTU#1015", "OTU#102", "OTU#1027", "OTU#1029", "OTU#103",
-          "OTU#1037", "OTU#104", "OTU#1045", "OTU#105", "OTU#106", 
-          "OTU#107", "OTU#1073", "OTU#1077", "OTU#1079", "OTU#108", 
-          "OTU#1083"), 
-  importance = c(0.25, 0.75, 0.45, 0.85, 0.002, 0.75, 0.92, 0.87, 
-                 0.78, 0.34, 0.19, 0.89, 0.43, 0.78, 0.67, 0.11, 
-                 0.98, 0.86, 0.54, 0.58, 0.73)
-)
+# ---- Step 8: Match OTUs with Cleaned Importance Data ----
+otu_clean<- Importance[-c(1, 5, 7, 8, 10, 13, 14, 15), -c(2, 3, 5)]
+colnames(otu_clean)[1] <- "OTU"
+colnames(otu_clean)[2] <- "Importance"
+otu_clean$OTU_ID <- sub("X\\.OTU\\.ID\\.(\\d+)", "OTU#\\1", otu_clean$OTU_ID)
 
 # ---- Step 9: Merge Importance Data ----
-matched_otu_importance <- merge(label_info, otu_importance, by = "OTU", all.x = TRUE)
+matched_otu_importance <- merge(label_info, otu_clean, by = "OTU", all.x = TRUE)
 
 # ---- Step 10: Prepare Phylogenetic Data ----
 phylo_data <- fortify(phylo) %>%
@@ -191,7 +188,7 @@ phylo_data <- fortify(phylo) %>%
 
 # ---- Step 11: Plotting The Tree ----
 p <- ggtree(phylo) %<+% phylo_data +  
-  geom_tippoint(aes(color = importance), size = 3) +  
+  geom_tippoint(aes(color = Importance), size = 3) +  
   geom_tiplab(aes(label = Bacteria), size = 2.5, align = TRUE, hjust = -0.1) +  
   scale_color_gradient(low = "lightblue", high = "red", na.value = "grey") +
   theme_tree() +
@@ -199,5 +196,3 @@ p <- ggtree(phylo) %<+% phylo_data +
 
 # Display the plot
 print(p)
-
-
