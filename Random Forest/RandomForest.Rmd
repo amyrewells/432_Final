@@ -86,10 +86,6 @@ keep_mapping<- mapping[, c("BeetleID", "Species")]
 merged_data<- merge(otu_table, keep_mapping, by= "BeetleID", all=TRUE)
 ```
 
-```{r}
-save(merged_data, file = "./data/MergedData.RData")
-```
-
 ***Remove untreated dung samples***
 
 ```{r}
