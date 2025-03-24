@@ -1,8 +1,7 @@
 #Remember to make into relative path
-setwd("C:/statistics/R/repositories/BIOL432_Final/")
-
+#setwd("C:/statistics/R/repositories/BIOL432_Final/")
 #OTUtable <- read.delim("otu_table.txt", header = TRUE, sep = "\t", 
-                       #check.names = FALSE, row.names= "#OTU ID")
+#check.names = FALSE, row.names= "#OTU ID")
 MetaData<- read.delim("mapping.txt", row.names = "X.SampleID")
 OTUtable<- read.csv("otu_table.csv", row.names = "OTU_ID")
 
@@ -115,3 +114,90 @@ ggtree(phylo) +
 #represent separate ecological roles in the beetle gut or dung environment.
 
 #Cannot colour by species. Maybe edit branch thickness to visualize most important otus from random forest?
+
+
+
+#TAYLOR PART
+# Load required packages
+library(rentrez)
+library(BiocManager)
+library(Biostrings)
+library(msa)
+library(ape)
+library(ggtree)
+library(ggplot2)
+library(dplyr)
+
+# ---- Step 1: Load MetaData and OTUtable ----
+MetaData <- read.delim("data/mapping.txt", row.names = "X.SampleID")
+OTUtable <- read.csv("data/otu_table.csv", row.names = "OTU_ID")
+
+# ---- Step 2: Fetch Sequences from NCBI ----
+accNum <- paste0("KX459", seq(698, 718))
+fetched <- lapply(accNum, function(accNum) {
+  entrez_fetch(db = "nucleotide", id = accNum, rettype = "fasta", retmode = "text")
+})
+formSeq <- unlist(fetched)
+writeLines(formSeq, "ncbi_sequences.fasta")
+
+# ---- Step 3: Align Sequences ----
+seq <- readDNAStringSet("ncbi_sequences.fasta")
+seq <- seq[!duplicated(names(seq))]  # Remove duplicated sequences
+align <- msa(seq, method = "Muscle", verbose = FALSE)
+writeXStringSet(DNAStringSet(as.character(align)), "aligned_sequences.fasta")
+
+# ---- Step 4: Build the Phylogenetic Tree ----
+alignSeq <- read.dna("aligned_sequences.fasta", format = "fasta")
+dist <- dist.dna(alignSeq)
+phylo <- nj(dist)
+
+# ---- Step 5: Extract Bacteria Names and OTU Numbers ----
+label_info <- data.frame(
+  original_label = phylo$tip.label,
+  Accession = sub(" .*", "", phylo$tip.label),                        # Extract Accession numbers
+  Bacteria = sub("^.*?\\d\\.\\d (.*?) clone.*", "\\1", phylo$tip.label),  # Extract Bacteria name
+  OTU = sub(".*(OTU#\\d+).*", "\\1", phylo$tip.label)                 # Extract OTU numbers
+)
+
+# ---- Step 6: Clean Bacteria Names (Remove "Uncultured") ----
+label_info$Bacteria <- gsub("^Uncultured ", "", label_info$Bacteria)  # Remove "Uncultured" from names
+
+# ---- Step 7: Remove Duplicates ----
+# Keeping the most important occurrence if there are duplicates
+label_info <- label_info %>%
+  group_by(Bacteria) %>%
+  mutate(Bacteria = ifelse(duplicated(Bacteria), paste0(Bacteria, "_", row_number()), Bacteria)) %>%
+  ungroup()
+
+# ---- Step 8: Match OTUs with Importance Data ----
+otu_importance <- data.frame(
+  OTU = c("OTU#10", "OTU#100", "OTU#107", "OTU#1007", "OTU#101", 
+          "OTU#1015", "OTU#102", "OTU#1027", "OTU#1029", "OTU#103",
+          "OTU#1037", "OTU#104", "OTU#1045", "OTU#105", "OTU#106", 
+          "OTU#107", "OTU#1073", "OTU#1077", "OTU#1079", "OTU#108", 
+          "OTU#1083"), 
+  importance = c(0.25, 0.75, 0.45, 0.85, 0.002, 0.75, 0.92, 0.87, 
+                 0.78, 0.34, 0.19, 0.89, 0.43, 0.78, 0.67, 0.11, 
+                 0.98, 0.86, 0.54, 0.58, 0.73)
+)
+
+# ---- Step 9: Merge Importance Data ----
+matched_otu_importance <- merge(label_info, otu_importance, by = "OTU", all.x = TRUE)
+
+# ---- Step 10: Prepare Phylogenetic Data ----
+phylo_data <- fortify(phylo) %>%
+  filter(isTip == TRUE) %>%  # Only keep tips for plotting
+  left_join(matched_otu_importance, by = c("label" = "original_label"))
+
+# ---- Step 11: Plotting The Tree ----
+p <- ggtree(phylo) %<+% phylo_data +  
+  geom_tippoint(aes(color = importance), size = 3) +  
+  geom_tiplab(aes(label = Bacteria), size = 2.5, align = TRUE, hjust = -0.1) +  
+  scale_color_gradient(low = "lightblue", high = "red", na.value = "grey") +
+  theme_tree() +
+  ggtitle("Final Phylogenetic Tree (No Duplicates)")
+
+# Display the plot
+print(p)
+
+
