@@ -7,6 +7,16 @@ output: html_document
 
 # Random Forrest
 
+to do:
+
+-   communicate changed nmds/ question 2
+
+-   change accuracy to kappa
+
+-   feature selction
+
+-   final doc
+
 ## Set up
 
 ***Load packages***
@@ -20,7 +30,7 @@ library(randomForest)
 ***Read in relative OTU data***
 
 ```{r}
-otu_table<- read.csv("./data/otu_rel.csv")
+otu_table<- read.csv("../data/otu_filtered.csv")
 ```
 
 ***Flip table***
@@ -84,6 +94,10 @@ keep_mapping<- mapping[, c("BeetleID", "Species")]
 
 ```{r}
 merged_data<- merge(otu_table, keep_mapping, by= "BeetleID", all=TRUE)
+```
+
+```{r}
+save(merged_data, file = "./data/MergedData.RData")
 ```
 
 ***Remove untreated dung samples***
