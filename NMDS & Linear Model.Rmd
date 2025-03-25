@@ -73,3 +73,47 @@ ggplot(metadata, aes(x = Species, y = NMDS2)) +
   theme_minimal() +
   labs(title = "Linear Model: NMDS2 vs Species", x = "Species", y = "NMDS2")
 ```
+Update:
+```{r}
+set.seed(432)
+# Using Bray-Curtis dissimilarity matrix for NMDS
+otu_data_numeric <- merged_data[, !colnames(merged_data) %in% c("Species"), drop = FALSE]  
+otu_data_matrix <- as.matrix(otu_data_numeric)
+bray_curtis_dist <- vegdist(otu_data_matrix, method = "bray")
+
+# Run NMDS
+nmds_result <- metaMDS(bray_curtis_dist, k = 2, trymax = 100)
+nmds_scores <- scores(nmds_result)
+
+# Create a dataframe for NMDS plot
+nmds_scores <- as.data.frame(nmds_result$points)
+#The scores are being labeled as MDS instead of NMDS but checking the NMDS_results do #confirm monoMDS (the default for NMDS) is being used.Not sure why the axes are now #referred to as MDS in the dataframe
+nmds_scores$Species <- merged_data$Species 
+
+# Plot NMDS results
+NMDS_Species<- ggplot(nmds_scores, aes(x = MDS1, y = MDS2)) +
+  geom_point(aes(color = Species)) + 
+  theme_minimal() + 
+  labs(title = "NMDS Plot: Dung Beetle Species Microbiome Composition ", x = "NMDS1", y = "NMDS2")
+
+print(NMDS_Species)
+#There seems to be some underlying factor that influences microbial communities. #There's no clear association between  dung beetle species and microbial communities.
+```
+```{r}
+# Run a linear model for both NMDS1 and NMDS2 against 'Species'
+lm_nmds1 <- lm(MDS1 ~ Species, data = nmds_scores)
+lm_nmds2 <- lm(MDS2 ~ Species, data = nmds_scores)
+
+# Summary of the linear model
+summary(lm_nmds1)
+#The p-value indicates no significant difference between the species in terms of MDS1 values, meaning species E. inter does not explain the variation in microbiome composition along the NMDS1 axis.
+summary(lm_nmds2)
+#no significant difference between the species in terms of MDS2 values, meaning species E. triang does not explain the variation in microbiome composition along the NMDS2 axis.
+
+# Plot LM
+ggplot(nmds_scores, aes(x = MDS1, y = MDS2)) +
+  geom_point(aes(color = Species), size = 4) +  # Scatter plot of NMDS1 vs Species
+  geom_smooth(method = "lm", aes(color = Species), linetype = "solid", se = FALSE) +
+  theme_minimal() +
+  labs(x = "NMDS1", y = "NMDS2")
+```
