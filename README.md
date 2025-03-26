@@ -11,4 +11,6 @@ Nithila Sathieskumar
 
 ## data from:
 https://doi.org/10.5061/dryad.vq744
-(just the OUT table and mapping.txt)
+(just the OTU table and mapping.txt)
+sequences available through NCBI
+(Accession nos KX459698–KX460822)
