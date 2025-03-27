@@ -1,0 +1,117 @@
+---
+title: "Random Forrest"
+author: "Amyre"
+date: "2025-03-23"
+output: html_document
+---
+
+# Random Forrest
+
+## Set up
+
+***Load packages***
+
+```{r}
+library(randomForest)
+```
+
+***Read in data***
+
+```{r}
+otu_table<- read.csv("../data/otu_filtered_merged.csv")
+otu_table$Species<- as.factor(otu_table$Species)
+```
+
+***Split data into train and test***
+
+```{r}
+test_data<-otu_table[1:nrow(otu_table) %% 3 == 0, ]
+
+train_data <- otu_table[1:nrow(otu_table) %% 3 != 0, ]
+```
+
+## Run Random Forest
+
+***Train model***
+
+```{r}
+set.seed(432)
+rf_model <- randomForest(Species~ ., data = train_data, ntree = 100, mtry=3, nodesize=1, importance=TRUE)
+
+```
+
+***Use model to predict test data***
+
+```{r}
+predictions <- predict(rf_model, newdata = test_data)
+```
+
+## Analyze
+
+### Importance
+
+```{r}
+importance_values <- importance(rf_model)
+sorted_importance <- importance_values[order(-importance_values[, "MeanDecreaseAccuracy"]), ]
+
+top_17 <- head(sorted_importance, 17)
+top_17
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+=======
+>>>>>>> 57481f1f76cc90cbeb8088ca952d8a880495f11e
+
+=======
+>>>>>>> Stashed changes
+```
+
+### Confusion matrix
+
+***Make matrix***
+
+```{r}
+actual <- test_data$Species
+confusion_matrix <- table(Predicted = predictions, Actual = actual)
+```
+
+***Get TP, TN, FP, FN***
+
+```{r}
+# For classifying E. intermedius
+ITP <- confusion_matrix["E. intermedius", "E. intermedius"] 
+ITN <- confusion_matrix["E. triangulatus", "E. triangulatus"]  
+IFP <- confusion_matrix["E. intermedius", "E. triangulatus"]  
+IFN <- confusion_matrix["E. triangulatus", "E. intermedius"]
+```
+
+***Calculate Cohen's Kappa***
+
+```{python}
+# For E. intermedius
+Itop= 2*((r.ITP *r.ITN)-(r.IFN*r.IFP))
+Ibottom= ((r.ITP+r.IFP)*(r.IFP+r.ITN))+((r.ITP+r.IFN)*(r.IFN+r.ITN))
+IKappa= Itop/Ibottom
+print("Cohen's Kappa for E. intermedius clasification is " + str(IKappa))
+```
+
+***Calculate accuracy***
+
+```{r}
+accuracy <- (ITP + ITN) / sum(confusion_matrix)
+print(paste("Accuracy:", accuracy))
+```
+
+## Save
+
+```{r}
+save(confusion_matrix, file = "../Figures/RFConfusionMatrix.RData")
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+=======
+save(merged_data, file = "../data/otu_filtered_merged.RData")
+>>>>>>> Stashed changes
+=======
+>>>>>>> 57481f1f76cc90cbeb8088ca952d8a880495f11e
+save(top_17, file = "./top_17.RData")
+
+```
