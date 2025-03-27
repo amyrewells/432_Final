@@ -15,107 +15,19 @@ output: html_document
 library(randomForest)
 ```
 
-### OTU data
-
-***Read in relative OTU data***
+***Read in data***
 
 ```{r}
-otu_table<- read.csv("../data/otu_filtered.csv")
-```
-
-***Flip table***
-
-In the original table rows are OTUs and columns beetle samples. To match standard OTU format this should be switched.
-
-```{r}
-otu_table<- as.data.frame(t(otu_table))
-
-```
-
-***Adjust row and column names***
-
-```{r}
-#columns
-col_names <- paste("X.OTU.ID.", trimws(otu_table[1, ]), sep="")
-otu_table <- otu_table[-1, ] #remove new rownames form data
-colnames(otu_table) <- col_names
-```
-
-```{r}
-#rows
-otu_table$BeetleID <- rownames(otu_table)
-```
-
-### Mapping data
-
-***Read in mapping data***
-
-```{r}
-mapping <- read.table("../data/mapping.txt", header = F, sep = "\t")
-
-```
-
-***Get BeetleID and Species information***
-
-```{r}
-mapping$BeetleID <- paste("X", mapping$V1, sep="")
-```
-
-```{r}
-#Extract  species information using regex 
-mapping$Species <- sub("^([^ ]+ [^ ]+).*", "\\1", mapping$V4)
-
-```
-
-```{r}
-#make new df of important info
-keep_mapping<- mapping[, c("BeetleID", "Species")]
-```
-
-### Combine and clean
-
-***Merge otu_table and keep_mapping***
-
-```{r}
-merged_data<- merge(otu_table, keep_mapping, by= "BeetleID", all=TRUE)
-```
-
-***Remove untreated dung samples***
-
-```{r}
-merged_data<- subset(merged_data, Species != "untreated dung")
-
-merged_data$Species<- as.factor(merged_data$Species)
-```
-
-These samples are not relevant to our research question.
-
-***Remove BeetleID***
-
-```{r}
-merged_data<- merged_data[, 2:ncol(merged_data)]
-```
-
-***Check for NAs***
-
-```{r}
-sum(is.na(merged_data))
-```
-
-***Ensure numbers are numeric***
-
-```{r}
-for (col_name in colnames(merged_data)[1:(ncol(merged_data)-1)]) {
-  merged_data[[col_name]] <- as.numeric(merged_data[[col_name]])
-}
+otu_table<- read.csv("../data/otu_filtered_merged.csv")
+otu_table$Species<- as.factor(otu_table$Species)
 ```
 
 ***Split data into train and test***
 
 ```{r}
-test_data<- merged_data[1:nrow(merged_data) %% 3 == 0, ]
+test_data<-otu_table[1:nrow(otu_table) %% 3 == 0, ]
 
-train_data <- merged_data[1:nrow(merged_data) %% 3 != 0, ]
+train_data <- otu_table[1:nrow(otu_table) %% 3 != 0, ]
 ```
 
 ## Run Random Forest
@@ -142,9 +54,12 @@ predictions <- predict(rf_model, newdata = test_data)
 importance_values <- importance(rf_model)
 sorted_importance <- importance_values[order(-importance_values[, "MeanDecreaseAccuracy"]), ]
 
-top_10 <- head(sorted_importance, 10)
-top_10
+top_17 <- head(sorted_importance, 17)
+top_17
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```
 
 ### Confusion matrix
@@ -176,11 +91,21 @@ IKappa= Itop/Ibottom
 print("Cohen's Kappa for E. intermedius clasification is " + str(IKappa))
 ```
 
+***Calculate accuracy***
+
+```{r}
+accuracy <- (ITP + ITN) / sum(confusion_matrix)
+print(paste("Accuracy:", accuracy))
+```
+
 ## Save
 
 ```{r}
 save(confusion_matrix, file = "../Figures/RFConfusionMatrix.RData")
+<<<<<<< Updated upstream
+=======
 save(merged_data, file = "../data/otu_filtered_merged.RData")
-save(top_10, file = "./top_10.RData")
+>>>>>>> Stashed changes
+save(top_17, file = "./top_17.RData")
 
 ```

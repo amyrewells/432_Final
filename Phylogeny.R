@@ -62,7 +62,7 @@ Heatmap<- ggplot(dist_long, aes(x = Bacteria1, y = Bacteria2, fill = Distance)) 
         panel.grid = element_blank())
 
 print(Heatmap)
-save(Heatmap, file = "heatmap_plot.RData")
+save(Heatmap, file = "./Figures/heatmap.RData")
 
 # ---- Step 9: Match OTUs with Cleaned Importance Data ----
 otu_clean<- Importance[-c(1, 5, 7, 8, 10, 13, 14, 15), -c(2, 3, 5)]
