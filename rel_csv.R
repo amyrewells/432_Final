@@ -1,7 +1,9 @@
-library(dplyr)
-setwd("C:/statistics/R/repositories/BIOL432_Final/")
+# This code transforms the absolute abundance OTU data from otu_table.csv 
+# into relative abundance OTU data, and saves as otu_rel.csv
 
-absOTU <- read.csv("otu_table.csv", check.names = FALSE, row.names= "OTU_ID")
+library(dplyr)
+
+absOTU <- read.csv("./data/otu_table.csv", check.names = FALSE, row.names= "OTU_ID")
 
 numeric_cols <- absOTU %>%
   select(where(is.numeric)) %>%
@@ -11,4 +13,4 @@ numeric_cols <- absOTU %>%
 relOTU <- absOTU %>%
   mutate(across(all_of(numeric_cols), ~ (. / sum(.)) * 1000))
 
-write.csv(relOTU, "otu_rel.csv", row.names = TRUE)
+write.csv(relOTU, "./data/otu_rel.csv", row.names = TRUE)
