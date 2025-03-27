@@ -2,12 +2,13 @@
 title: "FinalReport"
 author: "Amyre"
 date: "2025-03-24"
-output: html_document
+output:
+  pdf_document: default
 ---
 
 # Final Report
 
-## Members
+## Group Members
 
 Bonnie Rule (20295738),
 
@@ -21,7 +22,7 @@ Taylor Pontet-Dasilva (20310351),
 
 Nithila Sathieskumar (20279386)
 
-## Setup
+## Project Setup
 
 ***github***
 
@@ -41,62 +42,46 @@ Data was then cleaned and filtered so only microbe OTUs representing over 0.5% o
 
 Filtered data was then merged with relevant mapping data to categorize samples by species.
 
-The scripts preforming these transformations can be found in ./data/transformations. The data filed used for analysis are found in ./data.
+The scripts preforming these transformations can be found in ./data/transformations. The data files used for analysis are found in ./data.
 
 ## Question 1- 
 
 ### A- Do microbiome communities significantly differ between *E. intermedius* and *E. triangulatus* dung beetle species?
 
-To investigate this question,
+To investigate this question, we utilized NMDS plots to determine whether beetle samples cluster by species, based on their microbe communities.
 
 ```{r}
-set.seed(432)
-# Using Bray-Curtis dissimilarity matrix for NMDS
-otu_data_numeric <- merged_data[, !colnames(merged_data) %in% c("Species"), drop = FALSE]  
-otu_data_matrix <- as.matrix(otu_data_numeric)
-bray_curtis_dist <- vegdist(otu_data_matrix, method = "bray")
-
-# Run NMDS
-nmds_result <- metaMDS(bray_curtis_dist, k = 2, trymax = 100)
-nmds_scores <- scores(nmds_result)
-
-# Create a dataframe for NMDS plot
-nmds_scores <- as.data.frame(nmds_result$points)
-#The scores are being labeled as MDS instead of NMDS but checking the NMDS_results do #confirm monoMDS (the default for NMDS) is being used.Not sure why the axes are now #referred to as MDS in the dataframe
-nmds_scores$Species <- merged_data$Species 
-
-# Plot NMDS results
-NMDS_Species<- ggplot(nmds_scores, aes(x = MDS1, y = MDS2)) +
-  geom_point(aes(color = Species)) + 
-  theme_minimal() + 
-  labs(title = "NMDS Plot: Dung Beetle Species Microbiome Composition ", x = "NMDS1", y = "NMDS2")
-
-print(NMDS_Species)
-#There seems to be some underlying factor that influences microbial communities. #There's no clear association between  dung beetle species and microbial communities.
+load("./Figures/NMDSPlot.RData")
+NMDS_plot
 ```
+
+**Figure 1.** Non-metric multidimensional scaling (NMDS) plot of dung beetle species microbe composition based on Bray-Curtis distances. Points represent individual samples, with colors indicating species.
+
+Visually from the plot, we see that samples tend to cluster in distinct groups, but that those groups show no clear association between dung beetle species and microbial communities. Some other factor is likely influencing microbial communities, and we beleive this factor is the life stages of the beetle samples, which was investigated in the original paper from which this data originates (Shukla SP, Sanders JG, Byrne MJ, Pierce NE. Gut microbiota of dung beetles correspond to dietary specializations of adults and larvae. Mol Ecol. 2016;25(24):6092-6106. doi:10.1111/mec.13901).
+
+To confirm our initial observations, we investigated the significance of species on NMDS axis using linear models.
 
 ```{r}
-# Run a linear model for both NMDS1 and NMDS2 against 'Species'
-lm_nmds1 <- lm(MDS1 ~ Species, data = nmds_scores)
-lm_nmds2 <- lm(MDS2 ~ Species, data = nmds_scores)
-
-# Summary of the linear model
-summary(lm_nmds1)
-#The p-value indicates no significant difference between the species in terms of MDS1 values, meaning species E. inter does not explain the variation in microbiome composition along the NMDS1 axis.
-summary(lm_nmds2)
-#no significant difference between the species in terms of MDS2 values, meaning species E. triang does not explain the variation in microbiome composition along the NMDS2 axis.
-
-# Plot LM
-ggplot(nmds_scores, aes(x = MDS1, y = MDS2)) +
-  geom_point(aes(color = Species), size = 4) +  # Scatter plot of NMDS1 vs Species
-  geom_smooth(method = "lm", aes(color = Species), linetype = "solid", se = FALSE) +
-  theme_minimal() +
-  labs(x = "NMDS1", y = "NMDS2")
+load("./Figures/NMDS1_lm.RData")
+NMDS1_lm
 ```
+
+**Figure 2**. Boxplot depicting relationship between NMDS1 axis and dung beetle species. Points represent individual samples, with black bars representing means. The red line indicates the linear model of the relationship, though it is not significant (p= 0.960)
+
+```{r}
+load("./Figures/NMDS2_lm.RData")
+NMDS2_lm
+```
+
+**Figure 3**. Boxplot depicting relationship between NMDS1 axis and dung beetle species. Points represent individual samples, with black bars representing means. The red line indicates the linear model of the relationship, though it is not significant (p= 0.409)
+
+As expected, the p-values showed that species did not have a significant effect on NMDS axes (NMDS1: p= 0.960, NMDS2: p= 0.409).
+
+The code used to perform this section of analysis can be found in the markdown file named "NMDS & Linear Model.Rmd".
 
 ### B- Can these differences be used to predict species classification?
 
-By fitting a Random Forest model, we revealed that the make-up of microbial communities can be used to classify E. intermedius and E. triangulatus dung beetle samples with 88.89% accuracy. The confusion matrix of this model is shown in Table 1.
+Despite the above findings, by fitting a Random Forest model, we revealed that the make-up of microbial communities can be used to classify *E. intermedius* and *E. triangulatus* dung beetle samples with 88.89% accuracy. The confusion matrix of this model is shown in Table 1.
 
 **Table 1**. Confusion Matrix for Random Forest model classifying beetle species from microbe community data. Cohen's Kappa for this table is 0.7662.
 
@@ -105,12 +90,27 @@ load("./Figures/RFConfusionMatrix.RData")
 print(confusion_matrix)
 ```
 
+This suggests that microbial communities perform decently well as a metric to classify beetle samples by species.
+
 Additionally, we looked at which OTUs were most important in classifying decisions.
 
-**Table 2.** Top 10 most important microbe OTUs in classifying beetle species.
+**Table 2.** Most important microbe OTUs in classifying beetle species. OTU IDs were ranked based on their Mean Decreasing Accuracy Score, so that most important are at the top of the list, and the least important are at the bottom.
+
+```{r}
+load("./Random Forest/top_17.RData")
+top_17
+```
+
+This importance data will be used to analysis phylogenies in a later section.
+
+Code used to perform this section of analysis can be found in ./Random Forest.
 
 ### C- How do microbial communities differ between samples of different species?
 
 ##  Question 2
 
 \* Top OTUs were selected and those with vaialiable NCBI data were used for phylogeny
+
+## Conclusions 
+
+In conclusion, microbe communities do not significantly differ between beetle species. However, microbe community data can still be used to classify samples by Species with decent accuracy (\~89%). The main are ...

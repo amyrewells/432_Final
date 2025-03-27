@@ -13,8 +13,7 @@ library(vegan)
 library(ggplot2)
 
 # Read the data
-load("./data/otu_filtered_merged.RData")
-otu_data<- merged_data #.RData object is called merged_data 
+otu_data<- read.csv("./data/otu_filtered_merged.csv")
 ```
 
 # Performing NMDS
@@ -51,17 +50,30 @@ lm_nmds2 <- lm(NMDS2 ~ Species, data = nmds_df)
 summary(lm_nmds1)
 summary(lm_nmds2)
 
+# Get equation parts 
+slope_nmds1 <- coef(lm_nmds1)[2] 
+intercept_nmds1 <- coef(lm_nmds1)[1]
+
+slope_nmds2 <- coef(lm_nmds2)[2]
+intercept_nmds2 <- coef(lm_nmds2)[1]
+
 # Plot lms 
-NMDS_lm<- ggplot(nmds_df, aes(x = NMDS1, y = NMDS2)) +
-  geom_point(aes(color = Species), size = 4) +  # Scatter plot of NMDS1 vs Species
-  geom_smooth(method = "lm", aes(color = Species), linetype = "solid", se = FALSE) +
-  theme_minimal()
+NMDS1_lm<- ggplot(nmds_df, aes(x = Species, y = NMDS1)) +
+  geom_boxplot() +
+  labs(title = "NMDS1 by Species", x = "Species", y = "NMDS1") +
+  geom_abline(slope = slope_nmds1, intercept = intercept_nmds1, color = "red") 
+
+NMDS2_lm<- ggplot(nmds_df, aes(x = Species, y = NMDS2)) +
+  geom_boxplot() +
+  labs(title = "NMDS2 by Species", x = "Species", y = "NMDS2")+
+  geom_abline(slope = slope_nmds2, intercept = intercept_nmds2, color = "red") 
 ```
 
 # Save Figures 
 
 ```{r}
 save(NMDS_plot, file = "./Figures/NMDSPlot.RData")
-save(NMDS_lm, file = "./Figures/NMDS_lm.RData")
+save(NMDS1_lm, file = "./Figures/NMDS1_lm.RData")
+save(NMDS2_lm, file = "./Figures/NMDS2_lm.RData")
 
 ```
