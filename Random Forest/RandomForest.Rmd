@@ -56,13 +56,7 @@ sorted_importance <- importance_values[order(-importance_values[, "MeanDecreaseA
 
 top_17 <- head(sorted_importance, 17)
 top_17
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
->>>>>>> 57481f1f76cc90cbeb8088ca952d8a880495f11e
 
-=======
->>>>>>> Stashed changes
 ```
 
 ### Confusion matrix
@@ -105,13 +99,6 @@ print(paste("Accuracy:", accuracy))
 
 ```{r}
 save(confusion_matrix, file = "../Figures/RFConfusionMatrix.RData")
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-save(merged_data, file = "../data/otu_filtered_merged.RData")
->>>>>>> Stashed changes
-=======
->>>>>>> 57481f1f76cc90cbeb8088ca952d8a880495f11e
 save(top_17, file = "./top_17.RData")
 
 ```
