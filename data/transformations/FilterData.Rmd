@@ -130,5 +130,5 @@ for (col_name in colnames(merged_data)[1:(ncol(merged_data)-1)]) {
 ## Save
 
 ```{r}
-write.csv(merged_data, file = "../otu_filtered_merged.csv", row.names = TRUE)
+write.csv(merged_data, file = "../otu_filtered_merged.csv", row.names = FALSE)
 ```
