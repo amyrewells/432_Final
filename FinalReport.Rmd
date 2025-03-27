@@ -27,7 +27,11 @@ Nithila Sathieskumar (20279386)
 
 <https://github.com/amyrewells/432_Final>
 
-***data aquesition***
+***data acquisition***
+
+Data is from: <https://doi.org/10.5061/dryad.vq744> (just the OTU table and mapping.txt). This data can be found in ./data/input
+
+Sequences available through NCBI (Accession numbers KX459698–KX460822)
 
 ***data transformation***
 
@@ -37,13 +41,13 @@ Data was then cleaned and filtered so only microbe OTUs representing over 0.5% o
 
 Filtered data was then merged with relevant mapping data to categorize samples by species.
 
-\* Top OTUs were selected and those with vaialiable NCBI data were used for phylogeny
+The scripts preforming these transformations can be found in ./data/transformations. The data filed used for analysis are found in ./data.
 
 ## Question 1- 
 
-### A- Do microbiome communities significantly differ between E. intermedius and E. triangulatus dung beetle species?
+### A- Do microbiome communities significantly differ between *E. intermedius* and *E. triangulatus* dung beetle species?
 
-Update:
+To investigate this question,
 
 ```{r}
 set.seed(432)
@@ -108,3 +112,5 @@ Additionally, we looked at which OTUs were most important in classifying decisio
 ### C- How do microbial communities differ between samples of different species?
 
 ##  Question 2
+
+\* Top OTUs were selected and those with vaialiable NCBI data were used for phylogeny
