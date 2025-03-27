@@ -9,9 +9,9 @@ library(dplyr)
 library(tidyverse)
 
 # ---- Step 1: Load MetaData, OTUtable, and Importance Values ----
-MetaData <- read.delim("data/mapping.txt", row.names = "X.SampleID")
-OTUtable <- read.csv("data/otu_table.csv", row.names = "OTU_ID")
-Importance<- read.csv("Top17_OTU.csv")
+MetaData <- read.delim("data/input/mapping.txt", row.names = "X.SampleID")
+OTUtable <- read.csv("data/input/otu_table.csv", row.names = "OTU_ID")
+Importance<- read.csv("Random Forest/top_17.csv")
 
 # ---- Step 2: Fetch Sequences from NCBI ----
 accNum <- c("KX459721", "KX460758", "KX459915", "KX460102", "KX459847", 

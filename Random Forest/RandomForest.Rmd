@@ -99,6 +99,6 @@ print(paste("Accuracy:", accuracy))
 
 ```{r}
 save(confusion_matrix, file = "../Figures/RFConfusionMatrix.RData")
-save(top_17, file = "./top_17.RData")
+write.csv(top_17, "top_17.csv")
 
 ```
