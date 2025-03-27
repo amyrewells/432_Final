@@ -62,6 +62,7 @@ Heatmap<- ggplot(dist_long, aes(x = Bacteria1, y = Bacteria2, fill = Distance)) 
         panel.grid = element_blank())
 
 print(Heatmap)
+save(Heatmap, file = "heatmap_plot.RData")
 
 # ---- Step 9: Match OTUs with Cleaned Importance Data ----
 otu_clean<- Importance[-c(1, 5, 7, 8, 10, 13, 14, 15), -c(2, 3, 5)]
@@ -78,11 +79,11 @@ phylo_data <- fortify(phylo) %>%
   left_join(matched_otu_importance, by = c("label" = "original_label"))
 
 # ---- Step 12: Plotting The Tree ----
-p <- ggtree(phylo) %<+% phylo_data +  
+Tree <- ggtree(phylo) %<+% phylo_data +  
   geom_tippoint(aes(color = Importance), size = 3) +  
   geom_tiplab(aes(label = Bacteria), size = 2.8, align = TRUE, hjust = 1, vjust= -0.5, offset = 0.1) +
   scale_color_gradient(low = "red", high = "green") + 
   theme_tree() 
 
-print(p)
-ggsave("phylogeny_plot.png", plot = p, width = 12, height = 8, dpi = 500)
+print(Tree)
+save(Tree, file = "./Figures/Tree.RData")
