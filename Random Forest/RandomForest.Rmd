@@ -98,5 +98,5 @@ print(paste("Accuracy:", accuracy))
 
 ```{r}
 save(confusion_matrix, file = "../Figures/RFConfusionMatrix.RData")
-write.csv(top_10, "top_10.csv")
+write.csv(top_10, "../data/top_10.csv")
 ```
