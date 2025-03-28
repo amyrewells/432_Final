@@ -18,7 +18,7 @@ library(randomForest)
 ***Read in data***
 
 ```{r}
-otu_table<- read.csv("../data/otu_filtered_merged.csv")
+otu_table<- read.csv("./data/otu_filtered_merged.csv")
 otu_table$Species<- as.factor(otu_table$Species)
 ```
 
@@ -97,6 +97,6 @@ print(paste("Accuracy:", accuracy))
 ## Save
 
 ```{r}
-save(confusion_matrix, file = "../Figures/RFConfusionMatrix.RData")
-write.csv(top_10, "../data/top_10.csv")
+save(confusion_matrix, file = "./Figures/RFConfusionMatrix.RData")
+write.csv(top_10, "./data/top_10.csv")
 ```
