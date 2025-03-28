@@ -12,13 +12,13 @@ output: html_document
 ***Read in relative OTU table***
 
 ```{r}
-rel_data<- read.csv("../otu_rel.csv")
+rel_data<- read.csv("../otu_rel.csv", check.names = FALSE, row.names = "")
 ```
 
 ***Remove irrelevant rows***
 
 ```{r}
-rel_data<- rel_data[, 2:(ncol(rel_data)-1) ]
+rel_data<- rel_data[, -ncol(rel_data)]
 ```
 
 ***Sum rows***
@@ -70,8 +70,8 @@ otu_table$BeetleID <- rownames(otu_table)
 ***Read in mapping data***
 
 ```{r}
-mapping <- read.table("../input/mapping.txt", header = F, sep = "\t")
-
+url<- "https://raw.githubusercontent.com/amyrewells/432_Final/refs/heads/main/mapping.txt"
+mapping <- read.table(url, header = F, sep = "\t")
 ```
 
 ***Get BeetleID and Species information***
@@ -94,7 +94,7 @@ keep_mapping<- mapping[, c("BeetleID", "Species")]
 ***Merge otu_table and keep_mapping***
 
 ```{r}
-merged_data<- merge(otu_table, keep_mapping, by= "BeetleID", all=TRUE)
+merged_data<- cbind(otu_table, keep_mapping)
 ```
 
 ***Remove untreated dung samples***
@@ -110,7 +110,7 @@ These samples are not relevant to our research question.
 ***Remove BeetleID***
 
 ```{r}
-merged_data<- merged_data[, 2:ncol(merged_data)]
+merged_data <- merged_data[, -c(33, 34)]
 ```
 
 ***Check for NAs***
@@ -123,12 +123,11 @@ sum(is.na(merged_data))
 
 ```{r}
 for (col_name in colnames(merged_data)[1:(ncol(merged_data)-1)]) {
-  merged_data[[col_name]] <- as.numeric(merged_data[[col_name]])
-}
+  merged_data[[col_name]] <- as.numeric(merged_data[[col_name]])}
 ```
 
 ## Save
 
 ```{r}
-write.csv(merged_data, file = "../otu_filtered_merged.csv", row.names = FALSE)
+write.csv(merged_data, file = "../otu_filtered_merged2.csv", row.names = FALSE)
 ```

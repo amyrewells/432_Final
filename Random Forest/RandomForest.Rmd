@@ -18,7 +18,7 @@ library(randomForest)
 ***Read in data***
 
 ```{r}
-otu_table<- read.csv("../data/otu_filtered_merged.csv")
+otu_table<- read.csv("../data/otu_filtered_merged2.csv")
 otu_table$Species<- as.factor(otu_table$Species)
 ```
 
@@ -54,8 +54,8 @@ predictions <- predict(rf_model, newdata = test_data)
 importance_values <- importance(rf_model)
 sorted_importance <- importance_values[order(-importance_values[, "MeanDecreaseAccuracy"]), ]
 
-top_17 <- head(sorted_importance, 17)
-top_17
+top_10 <- head(sorted_importance, 10)
+top_10
 
 ```
 
@@ -99,6 +99,5 @@ print(paste("Accuracy:", accuracy))
 
 ```{r}
 save(confusion_matrix, file = "../Figures/RFConfusionMatrix.RData")
-write.csv(top_17, "top_17.csv")
-
+write.csv(top_10, "top_10.csv")
 ```
