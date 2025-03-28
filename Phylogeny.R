@@ -9,13 +9,14 @@ library(dplyr)
 library(tidyverse)
 
 # ---- Step 1: Load MetaData, OTUtable, and Importance Values ----
-MetaData <- read.delim("data/input/mapping.txt", row.names = "X.SampleID")
-OTUtable <- read.csv("data/input/otu_table.csv", row.names = "OTU_ID")
-Importance<- read.csv("Random Forest/top_17.csv")
+MetaData <- read.delim("../mapping.txt", row.names = "X.SampleID")
+OTUtable <- read.csv("../otu_table.csv", row.names = "OTU_ID")
+Importance<- read.csv("Random Forest/top_10.csv")
 
 # ---- Step 2: Fetch Sequences from NCBI ----
-accNum <- c("KX459721", "KX460758", "KX459915", "KX460102", "KX459847", 
-            "KX460465", "KX459737", "KX460199", "KX459813")
+accNum <- c("KX459959", "KX459698", "KX460680", "KX459898", 
+            "KX460175", "KX460089", "KX460557", "KX460234", "KX459830", "KX460616")
+
 fetched <- lapply(accNum, function(accNum) {
   entrez_fetch(db = "nucleotide", id = accNum, rettype = "fasta", retmode = "text")})
 formSeq <- unlist(fetched)
@@ -41,12 +42,15 @@ label_info <- data.frame(
 
 label_info$Bacteria <- gsub("^Uncultured ", "", label_info$Bacteria) 
 
+label_info[9, 3] <- "Bacteria_OTU#10"
+label_info[10, 3] <- "Bacteria_OTU#5678"
+
 # ---- Step 6: Replace labels with bacteria names ----
 rownames(dist_matrix) <- label_info$Bacteria
 colnames(dist_matrix) <- label_info$Bacteria
 
 # ---- Step 7: Reshape for ggplot ----
-dist_long <- as.data.frame(dist_matrix) %>%
+dist_long <- as.data.frame(dist_matrix, .name_repair = "minimal") %>%
   rownames_to_column("Bacteria1") %>%
   pivot_longer(-Bacteria1, names_to = "Bacteria2", values_to = "Distance")
 
@@ -62,10 +66,10 @@ Heatmap<- ggplot(dist_long, aes(x = Bacteria1, y = Bacteria2, fill = Distance)) 
         panel.grid = element_blank())
 
 print(Heatmap)
-save(Heatmap, file = "./Figures/heatmap.RData")
+ggsave("./Figures/Heatmap.png", plot = Heatmap, width = 8, height = 6, dpi = 300)
 
 # ---- Step 9: Match OTUs with Cleaned Importance Data ----
-otu_clean<- Importance[-c(1, 5, 7, 8, 10, 13, 14, 15), -c(2, 3, 5)]
+otu_clean<- Importance[,-c(2, 3, 5)]
 colnames(otu_clean)[1] <- "OTU"
 colnames(otu_clean)[2] <- "Importance"
 otu_clean$OTU <- sub("X\\.OTU\\.ID\\.(\\d+)", "OTU#\\1", otu_clean$OTU)
@@ -86,4 +90,4 @@ Tree <- ggtree(phylo) %<+% phylo_data +
   theme_tree() 
 
 print(Tree)
-save(Tree, file = "./Figures/Tree.RData")
+ggsave("./Figures/Tree.png", plot = Tree, width = 8, height = 6, dpi = 300)
