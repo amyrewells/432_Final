@@ -33,7 +33,7 @@ nmds_df <- data.frame(Species = otu_data$Species, NMDS1 = nmds_scores[,1], NMDS2
 
 # Plot NMDS results
 NMDS_plot<- ggplot(nmds_df, aes(x = NMDS1, y = NMDS2)) +
-  geom_point(aes(color = Sample)) + 
+  geom_point(aes(color = Species)) + 
   theme_minimal() + 
   labs(title = "NMDS Plot: Dung Beetle Species Microbiome Composition ", x = "NMDS1", y = "NMDS2")
 ```
