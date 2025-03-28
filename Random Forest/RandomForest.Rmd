@@ -18,7 +18,7 @@ library(randomForest)
 ***Read in data***
 
 ```{r}
-otu_table<- read.csv("../data/otu_filtered_merged2.csv")
+otu_table<- read.csv("../data/otu_filtered_merged.csv")
 otu_table$Species<- as.factor(otu_table$Species)
 ```
 
@@ -55,7 +55,6 @@ importance_values <- importance(rf_model)
 sorted_importance <- importance_values[order(-importance_values[, "MeanDecreaseAccuracy"]), ]
 
 top_10 <- head(sorted_importance, 10)
-top_10
 
 ```
 
