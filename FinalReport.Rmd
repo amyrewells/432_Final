@@ -119,7 +119,7 @@ load("./Figures/barplot.RData")
 print(barplot)
 ```
 
-**Figure 4**. Caption.
+**Figure 4**. Boxplot depicting relative abundance of top 10 most important OTUs across the two dung beetle species. Top 10 most important OTUs identified via Random Forest.
 
 As shown in Figure 4, abundance of each OTU varies across species. Interestingly, Dysgonomonas is found only in *E. intermedius* and Porphyromonadaceae is found only in *E. triangulatus* species. This would explain why these OTUs have an important effect on classifying beetle samples by species and suggests that the presence of these bacteria could potentially be used to classify dung beetles species as a whole. 
 
@@ -133,13 +133,13 @@ To investigate, we accessed the sequences of the top 10 important OTU (determine
 
 ![](./Figures/Heatmap.png)
 
-**Figure 5**. Caption.
+**Figure 5**. Heatmap of pairwise phylogenetic distances between top 10 most important OTUs used in species classification. Darker colours represent lower distances indicating closer evolutionary relationship. Lighter colours represent larger distances indicating further evolutionary relationship.
 
 Next, this data was compiled into a phylogenetic tree using the neighbour-joining method.
 
 ![](./Figures/Tree.png)
 
-**Figure 6**. Caption.
+**Figure 6**. Phylogenetic tree of the top 10 most important OTUs. Tree made by using the neighbour-joining method. The phylogenetic tree illustrates how host species may drive microbial evolution through selective pressures. 
 
 According to Figure 5, Dysgonomonas sp. and Porphyromonadaceae have a low phylogenetic distance (0.135), suggesting they are closely related. This aligns with their placement in the phylogenetic tree (Figure 6) which, in addition to their high importance (4.35 and 5.55, respectively) in distinguishing beetle species, highlights their potential co-evolution with their respective dung beetle host. For instance, while both bacteria are known to share similar roles in beetle digestion-- which would explain their close phylogenetic relationship-- their opposing presence in the dung beetle species shown in **Figure 4** alludes to their distinct adaptations to beetle species environments through, for example, niche specialization and host-microbe interactions. 
 
