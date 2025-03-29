@@ -62,7 +62,7 @@ NMDS_plot
 
 **Figure 1.** Non-metric multidimensional scaling (NMDS) plot of dung beetle species microbe composition based on Bray-Curtis distances. Points represent individual samples, with colors indicating species.
 
-Visually from the plot, we see that samples tend to cluster in distinct groups, but that those groups show no clear association between dung beetle species and microbial communities. Some other factor is likely influencing microbial communities, and we beleive this factor is the life stages of the beetle samples, which was investigated in the original paper from which this data originates (Shukla SP, Sanders JG, Byrne MJ, Pierce NE. Gut microbiota of dung beetles correspond to dietary specializations of adults and larvae. Mol Ecol. 2016;25(24):6092-6106. <doi:10.1111/mec.13901>).
+Visually from the plot, we see that samples somewhat cluster into distinct groups, but that those groups show no clear association between dung beetle species and microbial communities. Some other factor is likely influencing microbial communities, such as the life stages of the beetle samples or the microbe's ecological niche, which was investigated in the original paper from which this data originates (Shukla SP, Sanders JG, Byrne MJ, Pierce NE. Gut microbiota of dung beetles correspond to dietary specializations of adults and larvae. Mol Ecol. 2016;25(24):6092-6106. <doi:10.1111/mec.13901>).
 
 To confirm our initial observations, we investigated the significance of species on NMDS axis using linear models.
 
@@ -121,7 +121,7 @@ print(barplot)
 
 **Figure 4**. Caption.
 
-As shown in Figure 4, abundance of each OTU varies across species. Interestingly, Dysgonomonas is found only in *E. intermedius* and Porphyromonadaceae is found only in *E. triangulatus* species. This would explain why these OTUs have an important effect on classifying beetle samples by species.
+As shown in Figure 4, abundance of each OTU varies across species. Interestingly, Dysgonomonas is found only in *E. intermedius* and Porphyromonadaceae is found only in *E. triangulatus* species. This would explain why these OTUs have an important effect on classifying beetle samples by species and suggests that the presence of these bacteria could potentially be used to classify dung beetles species as a whole. 
 
 Code for this plot creation can be found in the barplots.R script.
 
@@ -129,7 +129,7 @@ Code for this plot creation can be found in the barplots.R script.
 
 ### How do relevant microbial communities of the dung beetle species differ in terms of phylogenetic relationship?
 
-To investigate, we acessed the sequences of the top 10 important OTU (determined in Random Forest model) via NCBI. We created a distance matrix of these aligned sequences. A heatmap was used to visualize distances and can be found in Figure 5.
+To investigate, we accessed the sequences of the top 10 important OTU (determined in Random Forest model) via NCBI. We created a distance matrix of these aligned sequences. A heatmap was used to visualize distances and can be found in Figure 5.
 
 ![](./Figures/Heatmap.png)
 
@@ -141,7 +141,7 @@ Next, this data was compiled into a phylogenetic tree using the neighbour-joinin
 
 **Figure 6**. Caption.
 
-According to Figure 5, Dysgonomonas sp. and Porphyromonadaceae have a low phylogenetic distance (0.135), suggesting they are closely related. This aligns with their placement in the phylogenetic tree (Figure 6) which, in addition to their high importance (4.35 and 5.55, respectively) in distinguishing beetle species, highlights their potential co-evolution with dung beetle hosts. Their similarity suggests they may have adapted to the beetle gut environment through niche specialization and host-microbe interactions. For instance, both bacteria are known to share similar roles in beetle digestion.
+According to Figure 5, Dysgonomonas sp. and Porphyromonadaceae have a low phylogenetic distance (0.135), suggesting they are closely related. This aligns with their placement in the phylogenetic tree (Figure 6) which, in addition to their high importance (4.35 and 5.55, respectively) in distinguishing beetle species, highlights their potential co-evolution with their respective dung beetle host. For instance, while both bacteria are known to share similar roles in beetle digestion-- which would explain their close phylogenetic relationship-- their opposing presence in the dung beetle species shown in **Figure 4** alludes to their distinct adaptations to beetle species environments through, for example, niche specialization and host-microbe interactions. 
 
 Similarly, Bacteria_OTU#5678 and Bacteria_OTU#10 appear very closely related (0.016), which could be due to their weak taxon assignment. Notably, while both bacteria play a role in distinguishing beetle species, Bacteria_OTU#10 serves as a stronger predictor (5.22), suggesting it has undergone greater evolutionary specialization. In contrast, Bacteria_OTU#5678 may have maintained a more generalized role, as indicated by its much lower predictive power (1.02).
 
