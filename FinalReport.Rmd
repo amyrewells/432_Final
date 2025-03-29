@@ -9,6 +9,9 @@ output:
 # Final Report
 
 -   Can we delete "old code" from barplots.R
+-   captions for figure 4,5, and 6.
+-   Some of my writing/ interpretations are weak. Feel free to add/improve.
+-   We should delete the duplicate .png and .RData files so that only what we use/ reference is left.
 
 ## Group Members
 
@@ -152,4 +155,4 @@ Code used for this section of the analysis can be found in the script file Phylo
 
 In conclusion, microbe communities do not significantly differ between beetle species. However, microbe community data can still be used to classify samples by Species with decent accuracy (\~89%). Some OTUs with large differences in abundance between species are Dysgonomonas and Porphyromonadaceae.
 
-The important OTU phylogeny revealed interesting insights into how bacterial lineages can diversify under dung beetle host selection pressures. In the future, this reasearch could be applied to expanded to investigate environmental factors and functional roles of microbes that ultimately contribute to microbial community differences in dung beetle species.
+The important OTU phylogeny revealed interesting insights into how bacterial lineages can diversify under dung beetle host selection pressures. In the future, this research could be applied to expanded to investigate environmental factors and functional roles of microbes that ultimately contribute to microbial community differences in dung beetle species.
