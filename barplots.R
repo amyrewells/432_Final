@@ -6,9 +6,9 @@ library(stringr)
 library(purrr)
 
 # Step 1: Load your data
-otu_table <- read_csv("otu_table.csv")
-top10 <- read_csv("./Random Forest/top_10.csv")
-mapping <- read_tsv("mapping.txt", comment = "#", 
+otu_table <- read_csv("./data/input/otu_table.csv")
+top10 <- read_csv("./data/top_10.csv")
+mapping <- read_tsv("./data/input/mapping.txt", comment = "#", 
                     col_names = c("SampleID", "BarcodeSequence", "LinkerPrimerSequence", "Description"))
 
 # Step 2: Extract numeric OTU IDs from the top 17 list
@@ -69,14 +69,17 @@ final <- abundanceData %>%
   left_join(top10_tax_long %>% select(OTU_ID, Taxon_Label), by = "OTU_ID")
 
 # Step 8: Plot the grouped bar chart
-ggplot(final, aes(x = Taxon_Label, y = Abundances, fill = Species)) +
+barplot<- ggplot(final, aes(x = Taxon_Label, y = Abundances, fill = Species)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(
     x = "OTU ID",
     y = "Total Abundance") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
   scale_fill_manual(values = c("#66c2a5", "#fc8d62")) +
   theme_minimal(base_size = 14)
-  
+
+# Save
+save(barplot, file= "./Figures/barplot.RData")  
+
 ####################################
 #old code
 # Step 1: Load your data
