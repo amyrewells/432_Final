@@ -9,9 +9,9 @@ library(dplyr)
 library(tidyverse)
 
 # ---- Step 1: Load MetaData, OTUtable, and Importance Values ----
-MetaData <- read.delim("../mapping.txt", row.names = "X.SampleID")
-OTUtable <- read.csv("../otu_table.csv", row.names = "OTU_ID")
-Importance<- read.csv("Random Forest/top_10.csv")
+MetaData <- read.delim("./data/input/mapping.txt", row.names = "X.SampleID")
+OTUtable <- read.csv("./data/input/otu_table.csv", row.names = "OTU_ID")
+Importance<- read.csv("./data/top_10.csv")
 
 # ---- Step 2: Fetch Sequences from NCBI ----
 accNum <- c("KX459959", "KX459698", "KX460680", "KX459898", 
@@ -66,7 +66,7 @@ Heatmap<- ggplot(dist_long, aes(x = Bacteria1, y = Bacteria2, fill = Distance)) 
         panel.grid = element_blank())
 
 print(Heatmap)
-ggsave("./Figures/Heatmap.png", plot = Heatmap, width = 8, height = 6, dpi = 300)
+#ggsave("./Figures/Heatmap.png", plot = Heatmap, width = 8, height = 6, dpi = 300)
 
 # ---- Step 9: Match OTUs with Cleaned Importance Data ----
 otu_clean<- Importance[,-c(2, 3, 5)]
@@ -90,4 +90,4 @@ Tree <- ggtree(phylo) %<+% phylo_data +
   theme_tree() 
 
 print(Tree)
-ggsave("./Figures/Tree.png", plot = Tree, width = 8, height = 6, dpi = 300)
+#ggsave("./Figures/Tree.png", plot = Tree, width = 8, height = 6, dpi = 300)
